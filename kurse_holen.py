@@ -22,6 +22,7 @@ TICKER = [
     "RRU.DE",
     "BGEO.L",
     "3350.T",
+    "HIVE", "TSLA",
 ]
 
 FELDER = ["ticker", "datum", "kurs", "vortag", "tag_prozent", "waehrung", "quelle", "abgerufen_utc"]
@@ -31,16 +32,20 @@ JETZT = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 SCHLUSS = {".SW": ("Europe/Zurich", 17, 35), ".DE": ("Europe/Berlin", 17, 35),
            ".L": ("Europe/London", 16, 40), ".T": ("Asia/Tokyo", 15, 35)}
+US = ("America/New_York", 16, 5)  # Ticker ohne Börsenendung
 
 
 def ist_offen(ticker, bar_zeit):
     """True, wenn der letzte Bar vom heutigen Börsentag stammt und der Schluss noch nicht erreicht ist."""
-    for endung, (zone, std, minute) in SCHLUSS.items():
-        if ticker.endswith(endung):
-            jetzt = datetime.now(ZoneInfo(zone))
-            schluss = jetzt.replace(hour=std, minute=minute, second=0, microsecond=0)
-            return bar_zeit.tz_convert(zone).date() == jetzt.date() and jetzt < schluss
-    return False
+    regel = next((r for e, r in SCHLUSS.items() if ticker.endswith(e)), None)
+    if regel is None:
+        if "." in ticker:
+            return False
+        regel = US
+    zone, std, minute = regel
+    jetzt = datetime.now(ZoneInfo(zone))
+    schluss = jetzt.replace(hour=std, minute=minute, second=0, microsecond=0)
+    return bar_zeit.tz_convert(zone).date() == jetzt.date() and jetzt < schluss
 
 
 def von_yahoo(ticker):
