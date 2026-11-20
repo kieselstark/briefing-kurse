@@ -1,6 +1,6 @@
 # briefing-kurse
 
-Schlusskurse der Beobachtungsliste für das Morning Briefing (SIX, London, Tokio).
+Schlusskurse der Beobachtungsliste für das Morning Briefing (SIX, Xetra, London, Tokio).
 
 - Läuft täglich um 02:30 UTC (06:30 Tiflis) als GitHub Action, manuell über „Run workflow“.
 - `kurse.csv`: aktueller Stand, eine Zeile je Ticker (Spalten: ticker, datum, kurs, vortag, tag_prozent, waehrung, quelle, abgerufen_utc). Das Briefing liest

@@ -18,8 +18,9 @@ from zoneinfo import ZoneInfo
 import yfinance as yf
 
 TICKER = [
-    "SPISI.SW", "VONN.SW", "SQN.SW", "NUCL.SW", "CSSMI.SW",
-    "RR.L", "BGEO.L", "BCOM.L", "UC14.L",
+    "SPISI.SW", "VONN.SW", "SQN.SW", "NUCL.SW", "CSSMI.SW", "BCOM.SW", "CCUSAS.SW",
+    "RRU.DE",
+    "BGEO.L",
     "3350.T",
 ]
 
@@ -28,7 +29,8 @@ HIER = Path(__file__).parent
 JETZT = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-SCHLUSS = {".SW": ("Europe/Zurich", 17, 35), ".L": ("Europe/London", 16, 40), ".T": ("Asia/Tokyo", 15, 35)}
+SCHLUSS = {".SW": ("Europe/Zurich", 17, 35), ".DE": ("Europe/Berlin", 17, 35),
+           ".L": ("Europe/London", 16, 40), ".T": ("Asia/Tokyo", 15, 35)}
 
 
 def ist_offen(ticker, bar_zeit):
