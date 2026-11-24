@@ -1,4 +1,4 @@
-"""Holt die Schlusskurse der Briefing-Beobachtungsliste und schreibt sie als CSV.
+"""Holt den letzten verfügbaren Kurs der Briefing-Beobachtungsliste und schreibt sie als CSV.
 
 kurse.csv     aktueller Stand (eine Zeile je Ticker), wird vom Morning Briefing gelesen
 historie.csv  fortlaufende Historie (ticker + datum eindeutig)
@@ -51,10 +51,17 @@ def ist_offen(ticker, bar_zeit):
 def von_yahoo(ticker):
     t = yf.Ticker(ticker)
     h = t.history(period="15d", interval="1d", auto_adjust=False)
+    # Letzter verfügbarer Kurs zählt, auch während die Börse offen ist (kein offizieller Schluss nötig).
+    # Yahoo liefert manchmal einen Tagesbalken mit Umsatz, aber ohne Kurs: dann den letzten
+    # Stundenkurs dieses Tages einsetzen.
+    leer = h["Close"].isna() & (h["Volume"] > 0)
+    if leer.any():
+        stunde = t.history(period="15d", interval="1h", auto_adjust=False).dropna(subset=["Close"])
+        for tag in h.index[leer]:
+            s = stunde[stunde.index.tz_convert(tag.tz).date == tag.date()]
+            if len(s):
+                h.loc[tag, "Close"] = s["Close"].iloc[-1]
     h = h.dropna(subset=["Close"])
-    # Nur abgeschlossene Handelstage: Bar von heute weglassen, solange die Börse noch offen ist
-    if len(h) and ist_offen(ticker, h.index[-1]):
-        h = h.iloc[:-1]
     if len(h) < 2:
         return None
     try:
