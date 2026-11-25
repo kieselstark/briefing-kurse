@@ -2,8 +2,10 @@ name: Kurse holen
 
 on:
   schedule:
-    # Mehrere Läufe, weil GitHub geplante Läufe oft um Stunden verschiebt (Briefing 07:45 Tiflis)
-    - cron: "17 18,21,23 * * *"   # 22:17, 01:17, 03:17 Tiflis
+    # Hauptlauf nach US-Börsenschluss (21:00 UTC Winter / 20:00 UTC Sommer), werktags
+    - cron: "30 21 * * 1-5"       # 01:30 Tiflis
+    # Reserveläufe, weil GitHub geplante Läufe oft um Stunden verschiebt (Briefing 07:45 Tiflis)
+    - cron: "17 23 * * *"         # 03:17 Tiflis
     - cron: "17 1,2,3 * * *"      # 05:17, 06:17, 07:17 Tiflis
   workflow_dispatch:
 
